@@ -272,55 +272,83 @@
         </div>
       </section>
 
-      <!-- Latihan Gerak (Foto Referensi, tanpa animasi) -->
+      <!-- Latihan Gerak -->
       <section id="view-gerak" class="hidden card rounded-2xl p-6 md:p-8 bg-emerald-50 border border-emerald-200">
-        <div class="space-y-4">
-          <h2 class="heading text-2xl font-bold text-emerald-900">Referensi Visual (Foto)</h2>
-          <p class="text-emerald-900/90">Empat foto contoh ragam khas Gambyong: Sembahan, Nglayang, Ulap-ulap, dan Seblak Sampur. Klik foto untuk memperbesar, atau ganti fotonya dengan tautan milik Anda.</p>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <h2 class="heading text-2xl font-bold text-emerald-900">Latihan Gerak Dasar</h2>
+            <p class="text-emerald-900/90">Ikuti 4 ragam gerak khas Gambyong: Sembahan, Nglayang (mengalun), Ulap-ulap (pergelangan), dan Seblak Sampur (sentakan selendang). Lihat animasi dan hitungan tempo.</p>
 
-          <!-- Galeri foto 2x2 -->
-          <div class="grid sm:grid-cols-2 gap-4">
-            <!-- Card 1 -->
-            <div class="relative rounded-2xl border border-emerald-200 bg-white/80 overflow-hidden group">
-              <img id="img1" src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80&auto=format&fit=crop" alt="Rujukan: Sembahan" class="w-full h-52 object-cover cursor-zoom-in" onerror="this.src=''; this.alt='Gambar gagal dimuat'; this.style.display='none'; this.closest('.relative').querySelector('.fallback1').classList.remove('hidden');">
-              <div class="fallback1 hidden absolute inset-0 grid place-items-center text-center p-4 text-emerald-900/80">Gambar gagal dimuat. Klik Ganti untuk menautkan gambar Anda.</div>
-              <div class="absolute top-3 left-3 text-xs px-2 py-1 rounded-lg bg-emerald-600/10 border border-emerald-200 text-emerald-800">Sembahan</div>
-              <button data-target="img1" class="btn absolute top-3 right-3 text-xs px-3 py-1.5 rounded-lg bg-white/90 border border-emerald-200 hover:bg-white">Ganti</button>
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <div class="flex items-center justify-between mb-3">
+                <div class="text-sm">
+                  <div class="font-semibold text-emerald-900">Langkah: <span id="stepName">Luwes</span></div>
+                  <div class="text-emerald-900/70">Hitungan: <span id="stepCount">1 • 2 • 3 • 4</span></div>
+                </div>
+                <span id="tempoLabel" class="text-xs px-2 py-1 rounded-lg bg-emerald-600/10 text-emerald-800 border border-emerald-200">Tempo: 1x</span>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button id="prevStep" class="btn px-3 py-2 rounded-lg bg-white border border-emerald-200 hover:bg-emerald-50">Sebelumnya</button>
+                <button id="nextStep" class="btn px-3 py-2 rounded-lg bg-white border border-emerald-200 hover:bg-emerald-50">Berikutnya</button>
+                <button id="playDemo" class="btn px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">Putar Demo</button>
+                <button id="markGerakDone" class="btn ml-auto px-3 py-2 rounded-lg bg-amber-600 text-white hover:bg-amber-700">Tandai Selesai</button>
+              </div>
+
+              <div class="mt-3">
+                <input id="tempo" type="range" min="1" max="3" step="1" value="1" class="w-full accent-emerald-600">
+                <div class="text-xs text-emerald-900/70">Geser untuk ubah tempo animasi</div>
+              </div>
             </div>
-            <!-- Card 2 -->
-            <div class="relative rounded-2xl border border-emerald-200 bg-white/80 overflow-hidden group">
-              <img id="img2" src="https://images.unsplash.com/photo-1549294413-26f195200c16?w=800&q=80&auto=format&fit=crop" alt="Rujukan: Nglayang" class="w-full h-52 object-cover cursor-zoom-in" onerror="this.src=''; this.alt='Gambar gagal dimuat'; this.style.display='none'; this.closest('.relative').querySelector('.fallback2').classList.remove('hidden');">
-              <div class="fallback2 hidden absolute inset-0 grid place-items-center text-center p-4 text-emerald-900/80">Gambar gagal dimuat. Klik Ganti untuk menautkan gambar Anda.</div>
-              <div class="absolute top-3 left-3 text-xs px-2 py-1 rounded-lg bg-emerald-600/10 border border-emerald-200 text-emerald-800">Nglayang</div>
-              <button data-target="img2" class="btn absolute top-3 right-3 text-xs px-3 py-1.5 rounded-lg bg-white/90 border border-emerald-200 hover:bg-white">Ganti</button>
-            </div>
-            <!-- Card 3 -->
-            <div class="relative rounded-2xl border border-emerald-200 bg-white/80 overflow-hidden group">
-              <img id="img3" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&q=80&auto=format&fit=crop" alt="Rujukan: Ulap-ulap" class="w-full h-52 object-cover cursor-zoom-in" onerror="this.src=''; this.alt='Gambar gagal dimuat'; this.style.display='none'; this.closest('.relative').querySelector('.fallback3').classList.remove('hidden');">
-              <div class="fallback3 hidden absolute inset-0 grid place-items-center text-center p-4 text-emerald-900/80">Gambar gagal dimuat. Klik Ganti untuk menautkan gambar Anda.</div>
-              <div class="absolute top-3 left-3 text-xs px-2 py-1 rounded-lg bg-emerald-600/10 border border-emerald-200 text-emerald-800">Ulap-ulap</div>
-              <button data-target="img3" class="btn absolute top-3 right-3 text-xs px-3 py-1.5 rounded-lg bg-white/90 border border-emerald-200 hover:bg-white">Ganti</button>
-            </div>
-            <!-- Card 4 -->
-            <div class="relative rounded-2xl border border-emerald-200 bg-white/80 overflow-hidden group">
-              <img id="img4" src="https://images.unsplash.com/photo-1531266752426-9b5326d5642a?w=800&q=80&auto=format&fit=crop" alt="Rujukan: Seblak Sampur" class="w-full h-52 object-cover cursor-zoom-in" onerror="this.src=''; this.alt='Gambar gagal dimuat'; this.style.display='none'; this.closest('.relative').querySelector('.fallback4').classList.remove('hidden');">
-              <div class="fallback4 hidden absolute inset-0 grid place-items-center text-center p-4 text-emerald-900/80">Gambar gagal dimuat. Klik Ganti untuk menautkan gambar Anda.</div>
-              <div class="absolute top-3 left-3 text-xs px-2 py-1 rounded-lg bg-emerald-600/10 border border-emerald-200 text-emerald-800">Seblak Sampur</div>
-              <button data-target="img4" class="btn absolute top-3 right-3 text-xs px-3 py-1.5 rounded-lg bg-white/90 border border-emerald-200 hover:bg-white">Ganti</button>
+
+            <!-- Tips -->
+            <div class="rounded-xl p-4 bg-gradient-to-r from-amber-100 to-emerald-100 border border-emerald-200">
+              <ul class="list-disc pl-5 text-sm text-emerald-900/90 space-y-1">
+                <li>Jaga bahu rileks dan tangan mengalir untuk gerak luwes.</li>
+                <li>Gerakkan mata mengikuti arah tangan untuk fokus pandangan.</li>
+                <li>Naikkan tumit (jinjit) saat transisi langkah.</li>
+                <li>Ikuti pola hitungan untuk merasakan gendhing (irama).</li>
+              </ul>
             </div>
           </div>
 
-          <div class="flex items-center gap-3 pt-1">
-            <button id="markGerakDone" class="btn px-4 py-2 rounded-xl bg-amber-600 text-white hover:bg-amber-700">Tandai Selesai</button>
-            <span class="text-sm text-emerald-900/70">Catatan: Bagian ini menggunakan foto statis, tanpa animasi.</span>
-          </div>
-        </div>
+          <!-- Animated Stage -->
+          <div class="relative min-h-[300px]">
+            <div class="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-200/60 to-amber-200/60 rounded-3xl blur-2xl"></div>
+            <div id="stage" class="h-full min-h-[320px] grid place-items-center">
+              <div class="relative w-full max-w-md aspect-[4/3] rounded-2xl border border-emerald-200 bg-white/70 overflow-hidden">
+                <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-amber-100/80 to-transparent"></div>
+                <!-- Dancer SVG for steps -->
+                <svg id="dancer" class="transition-all duration-500" width="100%" height="100%" viewBox="0 0 320 240" fill="none">
+                  <!-- Lantai -->
+                  <ellipse cx="160" cy="205" rx="90" ry="12" fill="rgba(16,185,129,.18)"/>
+                  <!-- Kepala -->
+                  <circle id="head" cx="160" cy="80" r="16" fill="#047857"/>
+                  <!-- Badan (tulang belakang) -->
+                  <path id="body" d="M160 96 L160 150" stroke="#065f46" stroke-width="8" stroke-linecap="round"/>
+                  <!-- Bahu sebagai referensi pivot: 142,118 dan 178,118 disesuaikan -->
+                  <!-- Tangan kiri -->
+                  <path id="armL" d="M142 118 L120 100" stroke="#10b981" stroke-width="8" stroke-linecap="round"/>
+                  <!-- Tangan kanan -->
+                  <path id="armR" d="M178 118 L200 100" stroke="#10b981" stroke-width="8" stroke-linecap="round"/>
+                  <!-- Kaki kiri -->
+                  <path id="legL" d="M160 150 L148 192" stroke="#059669" stroke-width="8" stroke-linecap="round"/>
+                  <!-- Kaki kanan -->
+                  <path id="legR" d="M160 150 L175 195" stroke="#059669" stroke-width="8" stroke-linecap="round"/>
+                  <!-- Selendang (sampur) -->
+                  <path id="scarf" d="M150 140 C180 132, 210 132, 220 135 C205 142, 190 155, 176 166 C168 172, 156 168, 150 160" fill="none" stroke="rgba(245,158,11,.85)" stroke-width="6" stroke-linecap="round"/>
+                </svg>
 
-        <!-- Modal Pratinjau -->
-        <div id="imgModal" class="hidden fixed inset-0 z-50 bg-black/60 p-4">
-          <div class="max-w-3xl mx-auto bg-white rounded-2xl overflow-hidden shadow-xl relative">
-            <button id="closeModal" class="btn absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-white border border-emerald-200">Tutup</button>
-            <img id="modalImage" src="" alt="Pratinjau" class="w-full max-h-[80vh] object-contain" onerror="this.src=''; this.alt='Gambar gagal dimuat';">
+                <!-- Beat indicators -->
+                <div class="absolute top-3 left-3 flex gap-1.5">
+                  <span class="beatDot h-2.5 w-2.5 rounded-full bg-emerald-400 opacity-40"></span>
+                  <span class="beatDot h-2.5 w-2.5 rounded-full bg-emerald-400 opacity-40"></span>
+                  <span class="beatDot h-2.5 w-2.5 rounded-full bg-emerald-400 opacity-40"></span>
+                  <span class="beatDot h-2.5 w-2.5 rounded-full bg-emerald-400 opacity-40"></span>
+                </div>
+                <div id="countDisplay" class="absolute top-3 right-3 text-xs px-2 py-1 rounded-lg bg-emerald-600/10 text-emerald-800 border border-emerald-200">1</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -783,5 +811,5 @@
     updateBadges();
 
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98286cefc5229d05',t:'MTc1ODQ0NTc4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98286fb1c66d9d05',t:'MTc1ODQ0NTg5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
