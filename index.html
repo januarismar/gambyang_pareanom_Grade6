@@ -127,7 +127,7 @@
             </div>
 
             <div class="tip mt-2 p-3 rounded-xl bg-white/70 text-emerald-900 text-sm">
-              Catatan: Aplikasi belum mendukung pemutaran audio, jadi irama gamelan diwakili oleh animasi visual dan hitungan tempo.
+              Catatan: Canva Code belum mendukung pemutaran audio, jadi irama gamelan diwakili oleh animasi visual dan hitungan tempo.
             </div>
           </div>
 
@@ -396,51 +396,6 @@
                 <label class="flex gap-2 items-center"><input type="radio" name="q5" value="hias" class="accent-emerald-600"> Hiasan panggung</label>
               </div>
             </div>
-
-            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
-              <p class="font-semibold text-emerald-900">6) Properti utama yang digunakan dalam tarian ini adalah:</p>
-              <div class="mt-2 grid gap-2">
-                <label class="flex gap-2 items-center"><input type="radio" name="q6" value="selendang" class="accent-emerald-600"> Selendang (sampur)</label>
-                <label class="flex gap-2 items-center"><input type="radio" name="q6" value="kipas" class="accent-emerald-600"> Kipas</label>
-                <label class="flex gap-2 items-center"><input type="radio" name="q6" value="payung" class="accent-emerald-600"> Payung</label>
-              </div>
-            </div>
-
-            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
-              <p class="font-semibold text-emerald-900">7) Berapa bagian utama dalam pertunjukan Gambyong Pareanom?</p>
-              <div class="mt-2 grid gap-2">
-                <label class="flex gap-2 items-center"><input type="radio" name="q7" value="tiga" class="accent-emerald-600"> Tiga bagian: Maju Gending, Tari Utama, Mundur Gending</label>
-                <label class="flex gap-2 items-center"><input type="radio" name="q7" value="dua" class="accent-emerald-600"> Dua bagian</label>
-                <label class="flex gap-2 items-center"><input type="radio" name="q7" value="empat" class="accent-emerald-600"> Empat bagian</label>
-              </div>
-            </div>
-
-            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
-              <p class="font-semibold text-emerald-900">8) Fokus khas pada bagian wajah yang ditekankan dalam gerak adalah:</p>
-              <div class="mt-2 grid gap-2">
-                <label class="flex gap-2 items-center"><input type="radio" name="q8" value="mata" class="accent-emerald-600"> Gerak mata/pandangan</label>
-                <label class="flex gap-2 items-center"><input type="radio" name="q8" value="mulut" class="accent-emerald-600"> Gerak mulut</label>
-                <label class="flex gap-2 items-center"><input type="radio" name="q8" value="pipi" class="accent-emerald-600"> Gerak pipi</label>
-              </div>
-            </div>
-
-            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
-              <p class="font-semibold text-emerald-900">9) Warna hijau pada busana melambangkan:</p>
-              <div class="mt-2 grid gap-2">
-                <label class="flex gap-2 items-center"><input type="radio" name="q9" value="kesuburan" class="accent-emerald-600"> Kesuburan</label>
-                <label class="flex gap-2 items-center"><input type="radio" name="q9" value="kehormatan" class="accent-emerald-600"> Kehormatan</label>
-                <label class="flex gap-2 items-center"><input type="radio" name="q9" value="keberanian" class="accent-emerald-600"> Keberanian</label>
-              </div>
-            </div>
-
-            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
-              <p class="font-semibold text-emerald-900">10) Tari ini awalnya ditampilkan pada upacara adat untuk:</p>
-              <div class="mt-2 grid gap-2">
-                <label class="flex gap-2 items-center"><input type="radio" name="q10" value="kesuburanTanah" class="accent-emerald-600"> Memohon kesuburan tanah</label>
-                <label class="flex gap-2 items-center"><input type="radio" name="q10" value="laut" class="accent-emerald-600"> Menenangkan ombak laut</label>
-                <label class="flex gap-2 items-center"><input type="radio" name="q10" value="nikah" class="accent-emerald-600"> Upacara pernikahan</label>
-              </div>
-            </div>
           </div>
 
           <div class="flex items-center gap-3">
@@ -501,7 +456,7 @@
     <!-- Footer -->
     <footer class="py-8">
       <div class="text-center text-sm text-emerald-900/70">
-        Dibuat oleh Januar ismar • Belajar interaktif, ringan, dan menyenangkan.
+        Dibuat oleh Canva Code • Belajar interaktif, ringan, dan menyenangkan.
       </div>
     </footer>
   </div>
@@ -801,19 +756,19 @@
     // Quiz
     const quizForm = document.getElementById('quizForm');
     const quizResult = document.getElementById('quizResult');
-    const answers = { q1:'solo', q2:'padi', q3:'m7', q4:'kuningHijau', q5:'iring', q6:'selendang', q7:'tiga', q8:'mata', q9:'kesuburan', q10:'kesuburanTanah' };
+    const answers = { q1:'solo', q2:'padi', q3:'m7', q4:'kuningHijau', q5:'iring' };
 
     quizForm.addEventListener('submit', (e)=>{
       e.preventDefault();
-      let correct=0, total=10;
+      let correct=0, total=5;
       Object.keys(answers).forEach(q=>{
         const chosen = quizForm.querySelector('input[name="'+q+'"]:checked');
         const val = chosen? chosen.value : '';
         if(val===answers[q]) correct++;
       });
       quizResult.textContent = 'Skor: '+correct+'/'+total+(correct===total?' • Sempurna!':'');
-      // Tandai selesai jika skor >= 8
-      if(correct>=8){ flags.quizDone=true; saveProgress(); updateBadges(); }
+      // Mark done if >= 4
+      if(correct>=4){ flags.quizDone=true; saveProgress(); updateBadges(); }
     });
     document.getElementById('resetQuiz').addEventListener('click', ()=>{
       quizForm.reset(); quizResult.textContent='';
@@ -828,5 +783,5 @@
     updateBadges();
 
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9827c5390206f914',t:'MTc1ODQzODkxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98286cefc5229d05',t:'MTc1ODQ0NTc4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
