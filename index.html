@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aplikasi Interaktif Seni Tari: Gambyong Pareanom</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="color-scheme" content="light">
+  <style>
+    /* Font pairing for elegance and readability */
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Marcellus&display=swap');
+    :root{
+      --brand-1:#10b981; /* emerald */
+      --brand-2:#f59e0b; /* amber */
+      --ink:#0b1324;
+    }
+    body{ font-family: 'Plus Jakarta Sans', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: #0b1324; }
+    .heading{ font-family: 'Marcellus', Georgia, serif; letter-spacing:.2px;}
+    /* Simple dancer figure animations */
+    .floaty { animation: floaty 3s ease-in-out infinite; }
+    @keyframes floaty { 0%,100%{ transform: translateY(0)} 50%{ transform: translateY(-6px)}}
+    .pulse-soft{ animation: pulseSoft 1.8s ease-in-out infinite;}
+    @keyframes pulseSoft {0%,100%{transform: scale(1)}50%{transform: scale(1.04)}}
+    .eye-focus{ animation: eyeFocus 1.6s ease-in-out infinite;}
+    @keyframes eyeFocus { 0%,100% { transform: translateX(0)} 50%{ transform: translateX(3px)}}
+    .tip{ box-shadow: 0 8px 24px rgba(16,185,129,.15), inset 0 0 0 1px rgba(16,185,129,.2);}
+    .card{ box-shadow: 0 10px 30px rgba(17,24,39,.08); }
+    .tab-active{ background: linear-gradient(135deg, rgba(16,185,129,.14), rgba(245,158,11,.14)); color:#072016; }
+    .glass{ backdrop-filter: blur(8px); background: rgba(255,255,255,.14); }
+    .soft-scroll{ scroll-behavior: smooth; }
+    .flip { perspective: 1000px; }
+    .flip-inner{ transform-style: preserve-3d; transition: transform .6s ease;}
+    .flip.flipped .flip-inner{ transform: rotateY(180deg); }
+    .flip-face{ backface-visibility: hidden; }
+    .flip-back{ transform: rotateY(180deg);}
+    /* Buttons micro-interactions */
+    .btn { transition: transform .15s ease, box-shadow .15s ease;}
+    .btn:active{ transform: translateY(1px); }
+  </style>
+</head>
+<body class="min-h-screen soft-scroll bg-gradient-to-br from-emerald-200 via-emerald-100 to-amber-100">
+
+  <!-- App Shell -->
+  <div class="max-w-6xl mx-auto px-4 py-8 md:py-10">
+    <!-- Header -->
+    <header class="mb-6 md:mb-8">
+      <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <!-- Simple emblem -->
+          <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-emerald-500 to-amber-500 grid place-items-center text-white shadow-lg">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+              <path d="M6 20c2-6 4-9 6-9s4 3 6 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="12" cy="6" r="3" stroke="white" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="heading text-2xl md:text-3xl font-bold text-emerald-800">Pembelajaran Interaktif: Tari Gambyong Pareanom</h1>
+            <p class="text-emerald-900/80 text-sm md:text-base">Materi, latihan, dan kuis untuk memahami keindahan tari klasik Jawa dari Surakarta.</p>
+          </div>
+        </div>
+        <div class="hidden md:flex items-center gap-3">
+          <span class="rounded-full bg-emerald-600/10 text-emerald-800 text-xs px-3 py-1">Tema warna: Kuning & Hijau</span>
+          <span class="rounded-full bg-amber-600/10 text-amber-800 text-xs px-3 py-1">Makna: Kemakmuran & Kesuburan</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Progress + Tabs -->
+    <section class="mb-6 md:mb-8">
+      <div class="card rounded-2xl p-4 md:p-5 bg-amber-50 border border-amber-200/60">
+        <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-semibold text-emerald-900">Progres Belajar</p>
+              <button id="resetProgress" class="btn text-xs px-3 py-1.5 rounded-lg bg-white/70 hover:bg-white text-emerald-800 border border-emerald-200">Atur Ulang</button>
+            </div>
+            <div class="mt-2 h-3 rounded-full bg-emerald-100 overflow-hidden">
+              <div id="progressBar" class="h-full w-0 rounded-full bg-gradient-to-r from-emerald-500 to-amber-500 transition-all duration-500"></div>
+            </div>
+            <p id="progressText" class="mt-1.5 text-xs text-emerald-900/80">0% selesai</p>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+            <span id="badgeMateri" class="px-3 py-2 rounded-xl bg-white text-emerald-800 border border-emerald-200 flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-300"></span> Materi
+            </span>
+            <span id="badgeGerak" class="px-3 py-2 rounded-xl bg-white text-emerald-800 border border-emerald-200 flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-300"></span> Latihan Gerak
+            </span>
+            <span id="badgeCocok" class="px-3 py-2 rounded-xl bg-white text-emerald-800 border border-emerald-200 flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-300"></span> Cocokkan
+            </span>
+            <span id="badgeKuis" class="px-3 py-2 rounded-xl bg-white text-emerald-800 border border-emerald-200 flex items-center gap-2">
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-300"></span> Kuis
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="mt-4 grid grid-cols-2 md:grid-cols-6 gap-2">
+        <button data-tab="beranda" class="tab-btn btn tab-active px-4 py-2 rounded-xl border border-emerald-200 text-emerald-900 hover:bg-emerald-50">Beranda</button>
+        <button data-tab="materi" class="tab-btn btn px-4 py-2 rounded-xl border border-emerald-200 text-emerald-900 hover:bg-emerald-50">Materi</button>
+        <button data-tab="gerak" class="tab-btn btn px-4 py-2 rounded-xl border border-emerald-200 text-emerald-900 hover:bg-emerald-50">Latihan Gerak</button>
+        <button data-tab="cocokkan" class="tab-btn btn px-4 py-2 rounded-xl border border-emerald-200 text-emerald-900 hover:bg-emerald-50">Cocokkan</button>
+        <button data-tab="kuis" class="tab-btn btn px-4 py-2 rounded-xl border border-emerald-200 text-emerald-900 hover:bg-emerald-50">Kuis</button>
+        <button data-tab="flashcard" class="tab-btn btn px-4 py-2 rounded-xl border border-emerald-200 text-emerald-900 hover:bg-emerald-50">Flashcard</button>
+      </nav>
+    </section>
+
+    <!-- Views -->
+    <main id="views" class="space-y-6 md:space-y-8">
+      <!-- Beranda -->
+      <section id="view-beranda" class="card rounded-2xl p-6 md:p-8 bg-emerald-50 border border-emerald-200">
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <h2 class="heading text-2xl font-bold text-emerald-900">Selamat datang!</h2>
+            <p class="text-emerald-900/90">Pelajari Tari Gambyong Pareanom: sejarah, ciri khas gerak, busana, bagian pertunjukan, fungsi gamelan, serta manfaatnya. Lanjutkan dengan latihan gerak sederhana, cocokkan konsep, dan uji pemahaman lewat kuis.</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <button data-tab="materi" class="btn quick-tab w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 text-white shadow-lg hover:shadow-xl">
+                Mulai dari Materi
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 5l8 7-8 7" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button data-tab="gerak" class="btn quick-tab w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white text-emerald-900 border border-emerald-200 hover:bg-emerald-50">
+                Latihan Gerak
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#0ea5e9" stroke-width="1.8"/><path d="M10 8l6 4-6 4V8z" fill="#0ea5e9"/></svg>
+              </button>
+            </div>
+
+            <div class="tip mt-2 p-3 rounded-xl bg-white/70 text-emerald-900 text-sm">
+              Catatan: Aplikasi belum mendukung pemutaran audio, jadi irama gamelan diwakili oleh animasi visual dan hitungan tempo.
+            </div>
+          </div>
+
+          <!-- Dancer visual -->
+          <div class="relative">
+            <div class="absolute inset-0 -z-10 bg-gradient-to-br from-amber-200/60 to-emerald-200/60 rounded-3xl blur-2xl"></div>
+            <div class="h-full min-h-[260px] grid place-items-center">
+              <svg class="floaty" width="280" height="260" viewBox="0 0 280 260" fill="none">
+                <!-- floor -->
+                <ellipse cx="140" cy="220" rx="95" ry="18" fill="rgba(16,185,129,.15)"/>
+                <!-- scarf -->
+                <path class="pulse-soft" d="M140 150c40-10 60-12 70-8-16 6-30 16-42 28-10 10-22 8-28-2" fill="rgba(245,158,11,.35)"/>
+                <!-- body -->
+                <rect x="120" y="110" width="40" height="60" rx="20" fill="#065f46"/>
+                <!-- head -->
+                <circle cx="140" cy="90" r="20" fill="#047857"/>
+                <!-- eyes -->
+                <circle class="eye-focus" cx="147" cy="88" r="3" fill="#fff"/>
+                <circle class="eye-focus" cx="133" cy="88" r="3" fill="#fff"/>
+                <!-- arms -->
+                <path d="M120 130c-18-8-30-18-36-30 16 8 34 6 48 2" stroke="#10b981" stroke-width="10" stroke-linecap="round"/>
+                <path d="M160 130c18-8 28-20 34-32-10 6-34 8-48 4" stroke="#10b981" stroke-width="10" stroke-linecap="round"/>
+                <!-- legs jinjit -->
+                <path d="M130 170c-4 14-8 28-8 40" stroke="#059669" stroke-width="10" stroke-linecap="round"/>
+                <path d="M150 170c10 18 18 30 22 42" stroke="#059669" stroke-width="10" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Materi -->
+      <section id="view-materi" class="hidden card rounded-2xl p-6 md:p-8 bg-amber-50 border border-amber-200">
+        <div class="flex flex-col md:flex-row gap-6">
+          <div class="flex-1 space-y-4">
+            <h2 class="heading text-2xl font-bold text-emerald-900">Rangkuman Materi Seni Tari</h2>
+
+            <!-- Accordion -->
+            <div class="space-y-3" id="accordion">
+              <details class="group bg-white/80 border border-amber-200 rounded-xl p-4">
+                <summary class="cursor-pointer list-none flex items-center justify-between">
+                  <span class="font-semibold text-emerald-900">Mengenal Tari Gambyong Pareanom</span>
+                  <span class="text-emerald-700 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div class="mt-3 text-emerald-900/90">
+                  <p>Tari Gambyong Pareanom adalah tari klasik Jawa dari Surakarta (Solo), dengan gerak lembut, anggun, dan penuh makna. “Pareanom” berarti padi muda/daun padi muda—melambangkan kesuburan, keceriaan, dan kemakmuran.</p>
+                </div>
+              </details>
+
+              <details class="group bg-white/80 border border-amber-200 rounded-xl p-4">
+                <summary class="cursor-pointer list-none flex items-center justify-between">
+                  <span class="font-semibold text-emerald-900">Sejarah Tari Gambyong</span>
+                  <span class="text-emerald-700 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div class="mt-3 text-emerald-900/90">
+                  <p>Awalnya tari rakyat pada upacara adat pertanian untuk memohon kesuburan tanah. Pada 1950-an, Mangkunegara VII menyempurnakannya—gerak, busana, dan iringan—hingga dikenal sebagai tari klasik Gambyong Pareanom.</p>
+                </div>
+              </details>
+
+              <details class="group bg-white/80 border border-amber-200 rounded-xl p-4">
+                <summary class="cursor-pointer list-none flex items-center justify-between">
+                  <span class="font-semibold text-emerald-900">Ciri Khas Gerak</span>
+                  <span class="text-emerald-700 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div class="mt-3 text-emerald-900/90 space-y-2">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <li>Luwes dan halus: gerakan tangan, kaki, dan tubuh yang mengalir.</li>
+                    <li>Fokus pada gerak mata: pandangan hidup mengikuti gerak.</li>
+                    <li>Jinjit: posisi kaki sering jinjit saat melangkah.</li>
+                    <li>Gendhing: gerak tubuh mengikuti irama gamelan.</li>
+                  </ul>
+                </div>
+              </details>
+
+              <details class="group bg-white/80 border border-amber-200 rounded-xl p-4">
+                <summary class="cursor-pointer list-none flex items-center justify-between">
+                  <span class="font-semibold text-emerald-900">Busana dan Properti</span>
+                  <span class="text-emerald-700 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div class="mt-3 text-emerald-900/90">
+                  <p>Kostum kuning dan hijau: kuning melambangkan kemakmuran/kehormatan, hijau melambangkan kesuburan. Properti utama: selendang diikat di pinggang untuk memperindah gerak.</p>
+                </div>
+              </details>
+
+              <details class="group bg-white/80 border border-amber-200 rounded-xl p-4">
+                <summary class="cursor-pointer list-none flex items-center justify-between">
+                  <span class="font-semibold text-emerald-900">Bagian Pertunjukan</span>
+                  <span class="text-emerald-700 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div class="mt-3 text-emerald-900/90">
+                  <ol class="list-decimal pl-5 space-y-1">
+                    <li>Maju Gending: pembukaan tarian.</li>
+                    <li>Tari Utama: inti tarian dengan variasi gerak.</li>
+                    <li>Mundur Gending: penutup tarian.</li>
+                  </ol>
+                </div>
+              </details>
+
+              <details class="group bg-white/80 border border-amber-200 rounded-xl p-4">
+                <summary class="cursor-pointer list-none flex items-center justify-between">
+                  <span class="font-semibold text-emerald-900">Fungsi Alat Musik</span>
+                  <span class="text-emerald-700 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div class="mt-3 text-emerald-900/90">
+                  <p>Gamelan sebagai pengiring yang mengatur tempo dan irama, membantu penyelarasan gerak sehingga harmonis dan indah.</p>
+                </div>
+              </details>
+
+              <details class="group bg-white/80 border border-amber-200 rounded-xl p-4">
+                <summary class="cursor-pointer list-none flex items-center justify-between">
+                  <span class="font-semibold text-emerald-900">Manfaat Mempelajari Tari</span>
+                  <span class="text-emerald-700 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div class="mt-3 text-emerald-900/90">
+                  <ul class="list-disc pl-5 space-y-1">
+                    <li>Melestarikan budaya bangsa.</li>
+                    <li>Melatih kelenturan tubuh.</li>
+                    <li>Meningkatkan konsentrasi dan kepekaan irama.</li>
+                    <li>Menumbuhkan percaya diri.</li>
+                    <li>Menghargai seni dan budaya daerah lain.</li>
+                  </ul>
+                </div>
+              </details>
+            </div>
+
+            <div class="pt-2">
+              <button id="markMateriDone" class="btn px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white">Tandai Materi Selesai</button>
+            </div>
+          </div>
+
+          <!-- Catatan -->
+          <aside class="md:w-80">
+            <div class="sticky top-6 card rounded-2xl p-5 bg-white/80 border border-emerald-200">
+              <h3 class="font-semibold text-emerald-900 mb-2">Catatan Belajar</h3>
+              <textarea id="notes" class="w-full h-40 p-3 rounded-xl border border-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white/80" placeholder="Tulis poin penting di sini..."></textarea>
+              <div class="mt-2 flex items-center justify-between">
+                <button id="saveNotes" class="btn text-sm px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">Simpan</button>
+                <span id="notesSaved" class="text-xs text-emerald-800/70">Belum disimpan</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Latihan Gerak (Foto Referensi, tanpa animasi) -->
+      <section id="view-gerak" class="hidden card rounded-2xl p-6 md:p-8 bg-emerald-50 border border-emerald-200">
+        <div class="space-y-4">
+          <h2 class="heading text-2xl font-bold text-emerald-900">Referensi Visual (Foto)</h2>
+          <p class="text-emerald-900/90">Empat foto contoh ragam khas Gambyong: Sembahan, Nglayang, Ulap-ulap, dan Seblak Sampur. Klik foto untuk memperbesar, atau ganti fotonya dengan tautan milik Anda.</p>
+
+          <!-- Galeri foto 2x2 -->
+          <div class="grid sm:grid-cols-2 gap-4">
+            <!-- Card 1 -->
+            <div class="relative rounded-2xl border border-emerald-200 bg-white/80 overflow-hidden group">
+              <img id="img1" src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80&auto=format&fit=crop" alt="Rujukan: Sembahan" class="w-full h-52 object-cover cursor-zoom-in" onerror="this.src=''; this.alt='Gambar gagal dimuat'; this.style.display='none'; this.closest('.relative').querySelector('.fallback1').classList.remove('hidden');">
+              <div class="fallback1 hidden absolute inset-0 grid place-items-center text-center p-4 text-emerald-900/80">Gambar gagal dimuat. Klik Ganti untuk menautkan gambar Anda.</div>
+              <div class="absolute top-3 left-3 text-xs px-2 py-1 rounded-lg bg-emerald-600/10 border border-emerald-200 text-emerald-800">Sembahan</div>
+              <button data-target="img1" class="btn absolute top-3 right-3 text-xs px-3 py-1.5 rounded-lg bg-white/90 border border-emerald-200 hover:bg-white">Ganti</button>
+            </div>
+            <!-- Card 2 -->
+            <div class="relative rounded-2xl border border-emerald-200 bg-white/80 overflow-hidden group">
+              <img id="img2" src="https://images.unsplash.com/photo-1549294413-26f195200c16?w=800&q=80&auto=format&fit=crop" alt="Rujukan: Nglayang" class="w-full h-52 object-cover cursor-zoom-in" onerror="this.src=''; this.alt='Gambar gagal dimuat'; this.style.display='none'; this.closest('.relative').querySelector('.fallback2').classList.remove('hidden');">
+              <div class="fallback2 hidden absolute inset-0 grid place-items-center text-center p-4 text-emerald-900/80">Gambar gagal dimuat. Klik Ganti untuk menautkan gambar Anda.</div>
+              <div class="absolute top-3 left-3 text-xs px-2 py-1 rounded-lg bg-emerald-600/10 border border-emerald-200 text-emerald-800">Nglayang</div>
+              <button data-target="img2" class="btn absolute top-3 right-3 text-xs px-3 py-1.5 rounded-lg bg-white/90 border border-emerald-200 hover:bg-white">Ganti</button>
+            </div>
+            <!-- Card 3 -->
+            <div class="relative rounded-2xl border border-emerald-200 bg-white/80 overflow-hidden group">
+              <img id="img3" src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&q=80&auto=format&fit=crop" alt="Rujukan: Ulap-ulap" class="w-full h-52 object-cover cursor-zoom-in" onerror="this.src=''; this.alt='Gambar gagal dimuat'; this.style.display='none'; this.closest('.relative').querySelector('.fallback3').classList.remove('hidden');">
+              <div class="fallback3 hidden absolute inset-0 grid place-items-center text-center p-4 text-emerald-900/80">Gambar gagal dimuat. Klik Ganti untuk menautkan gambar Anda.</div>
+              <div class="absolute top-3 left-3 text-xs px-2 py-1 rounded-lg bg-emerald-600/10 border border-emerald-200 text-emerald-800">Ulap-ulap</div>
+              <button data-target="img3" class="btn absolute top-3 right-3 text-xs px-3 py-1.5 rounded-lg bg-white/90 border border-emerald-200 hover:bg-white">Ganti</button>
+            </div>
+            <!-- Card 4 -->
+            <div class="relative rounded-2xl border border-emerald-200 bg-white/80 overflow-hidden group">
+              <img id="img4" src="https://images.unsplash.com/photo-1531266752426-9b5326d5642a?w=800&q=80&auto=format&fit=crop" alt="Rujukan: Seblak Sampur" class="w-full h-52 object-cover cursor-zoom-in" onerror="this.src=''; this.alt='Gambar gagal dimuat'; this.style.display='none'; this.closest('.relative').querySelector('.fallback4').classList.remove('hidden');">
+              <div class="fallback4 hidden absolute inset-0 grid place-items-center text-center p-4 text-emerald-900/80">Gambar gagal dimuat. Klik Ganti untuk menautkan gambar Anda.</div>
+              <div class="absolute top-3 left-3 text-xs px-2 py-1 rounded-lg bg-emerald-600/10 border border-emerald-200 text-emerald-800">Seblak Sampur</div>
+              <button data-target="img4" class="btn absolute top-3 right-3 text-xs px-3 py-1.5 rounded-lg bg-white/90 border border-emerald-200 hover:bg-white">Ganti</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 pt-1">
+            <button id="markGerakDone" class="btn px-4 py-2 rounded-xl bg-amber-600 text-white hover:bg-amber-700">Tandai Selesai</button>
+            <span class="text-sm text-emerald-900/70">Catatan: Bagian ini menggunakan foto statis, tanpa animasi.</span>
+          </div>
+        </div>
+
+        <!-- Modal Pratinjau -->
+        <div id="imgModal" class="hidden fixed inset-0 z-50 bg-black/60 p-4">
+          <div class="max-w-3xl mx-auto bg-white rounded-2xl overflow-hidden shadow-xl relative">
+            <button id="closeModal" class="btn absolute top-3 right-3 px-3 py-1.5 rounded-lg bg-white border border-emerald-200">Tutup</button>
+            <img id="modalImage" src="" alt="Pratinjau" class="w-full max-h-[80vh] object-contain" onerror="this.src=''; this.alt='Gambar gagal dimuat';">
+          </div>
+        </div>
+      </section>
+
+      <!-- Cocokkan (Match) -->
+      <section id="view-cocokkan" class="hidden card rounded-2xl p-6 md:p-8 bg-amber-50 border border-amber-200">
+        <h2 class="heading text-2xl font-bold text-emerald-900 mb-4">Cocokkan Bagian Pertunjukan</h2>
+        <p class="text-emerald-900/90 mb-4">Pilih satu dari kiri lalu pilih pasangan yang tepat di kanan. Kunci saat benar!</p>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <div id="leftList" class="grid gap-3">
+              <!-- generated -->
+            </div>
+          </div>
+          <div>
+            <div id="rightList" class="grid gap-3">
+              <!-- generated -->
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <button id="resetMatch" class="btn px-4 py-2 rounded-xl bg-white border border-emerald-200 hover:bg-emerald-50">Ulangi</button>
+          <button id="markMatchDone" class="btn px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700">Tandai Selesai</button>
+          <span id="matchStatus" class="text-sm text-emerald-900/80"></span>
+        </div>
+      </section>
+
+      <!-- Kuis -->
+      <section id="view-kuis" class="hidden card rounded-2xl p-6 md:p-8 bg-emerald-50 border border-emerald-200">
+        <h2 class="heading text-2xl font-bold text-emerald-900 mb-4">Kuis Cepat</h2>
+        <form id="quizForm" class="space-y-5">
+          <!-- Questions -->
+          <div class="space-y-4">
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <p class="font-semibold text-emerald-900">1) Dari mana asal Tari Gambyong Pareanom?</p>
+              <div class="mt-2 grid gap-2">
+                <label class="flex gap-2 items-center"><input type="radio" name="q1" value="solo" class="accent-emerald-600"> Surakarta (Solo), Jawa Tengah</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q1" value="bali" class="accent-emerald-600"> Bali</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q1" value="padang" class="accent-emerald-600"> Padang</label>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <p class="font-semibold text-emerald-900">2) “Pareanom” bermakna apa?</p>
+              <div class="mt-2 grid gap-2">
+                <label class="flex gap-2 items-center"><input type="radio" name="q2" value="padi" class="accent-emerald-600"> Padi muda / daun padi muda</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q2" value="laut" class="accent-emerald-600"> Ombak di laut</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q2" value="gunung" class="accent-emerald-600"> Gunung hijau</label>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <p class="font-semibold text-emerald-900">3) Siapa yang menyempurnakan tari ini pada 1950-an?</p>
+              <div class="mt-2 grid gap-2">
+                <label class="flex gap-2 items-center"><input type="radio" name="q3" value="m7" class="accent-emerald-600"> Mangkunegara VII</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q3" value="sby" class="accent-emerald-600"> Sultan HB IX</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q3" value="ra" class="accent-emerald-600"> R.A. Kartini</label>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <p class="font-semibold text-emerald-900">4) Warna kostum yang sering digunakan dan maknanya yang tepat adalah:</p>
+              <div class="mt-2 grid gap-2">
+                <label class="flex gap-2 items-center"><input type="radio" name="q4" value="kuningHijau" class="accent-emerald-600"> Kuning (kemakmuran/kehormatan) & Hijau (kesuburan)</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q4" value="merahBiru" class="accent-emerald-600"> Merah (ceria) & Biru (kemakmuran)</label>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <p class="font-semibold text-emerald-900">5) Fungsi gamelan dalam tari ini adalah:</p>
+              <div class="mt-2 grid gap-2">
+                <label class="flex gap-2 items-center"><input type="radio" name="q5" value="iring" class="accent-emerald-600"> Pengiring yang mengatur tempo dan irama</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q5" value="hias" class="accent-emerald-600"> Hiasan panggung</label>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <p class="font-semibold text-emerald-900">6) Properti utama yang digunakan dalam tarian ini adalah:</p>
+              <div class="mt-2 grid gap-2">
+                <label class="flex gap-2 items-center"><input type="radio" name="q6" value="selendang" class="accent-emerald-600"> Selendang (sampur)</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q6" value="kipas" class="accent-emerald-600"> Kipas</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q6" value="payung" class="accent-emerald-600"> Payung</label>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <p class="font-semibold text-emerald-900">7) Berapa bagian utama dalam pertunjukan Gambyong Pareanom?</p>
+              <div class="mt-2 grid gap-2">
+                <label class="flex gap-2 items-center"><input type="radio" name="q7" value="tiga" class="accent-emerald-600"> Tiga bagian: Maju Gending, Tari Utama, Mundur Gending</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q7" value="dua" class="accent-emerald-600"> Dua bagian</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q7" value="empat" class="accent-emerald-600"> Empat bagian</label>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <p class="font-semibold text-emerald-900">8) Fokus khas pada bagian wajah yang ditekankan dalam gerak adalah:</p>
+              <div class="mt-2 grid gap-2">
+                <label class="flex gap-2 items-center"><input type="radio" name="q8" value="mata" class="accent-emerald-600"> Gerak mata/pandangan</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q8" value="mulut" class="accent-emerald-600"> Gerak mulut</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q8" value="pipi" class="accent-emerald-600"> Gerak pipi</label>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <p class="font-semibold text-emerald-900">9) Warna hijau pada busana melambangkan:</p>
+              <div class="mt-2 grid gap-2">
+                <label class="flex gap-2 items-center"><input type="radio" name="q9" value="kesuburan" class="accent-emerald-600"> Kesuburan</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q9" value="kehormatan" class="accent-emerald-600"> Kehormatan</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q9" value="keberanian" class="accent-emerald-600"> Keberanian</label>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-white/80 border border-emerald-200 p-4">
+              <p class="font-semibold text-emerald-900">10) Tari ini awalnya ditampilkan pada upacara adat untuk:</p>
+              <div class="mt-2 grid gap-2">
+                <label class="flex gap-2 items-center"><input type="radio" name="q10" value="kesuburanTanah" class="accent-emerald-600"> Memohon kesuburan tanah</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q10" value="laut" class="accent-emerald-600"> Menenangkan ombak laut</label>
+                <label class="flex gap-2 items-center"><input type="radio" name="q10" value="nikah" class="accent-emerald-600"> Upacara pernikahan</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button class="btn px-4 py-2 rounded-xl bg-emerald-600 text-white hover:bg-emerald-700">Periksa Jawaban</button>
+            <button id="resetQuiz" type="button" class="btn px-4 py-2 rounded-xl bg-white border border-emerald-200 hover:bg-emerald-50">Ulangi</button>
+            <span id="quizResult" class="text-sm text-emerald-900/80"></span>
+          </div>
+        </form>
+      </section>
+
+      <!-- Flashcards -->
+      <section id="view-flashcard" class="hidden card rounded-2xl p-6 md:p-8 bg-amber-50 border border-amber-200">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="heading text-2xl font-bold text-emerald-900">Flashcard Istilah</h2>
+          <div class="text-sm text-emerald-900/80">Ketuk kartu untuk membalik</div>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- cards -->
+          <div class="flip bg-transparent">
+            <div class="flip-inner relative w-full h-40 rounded-2xl">
+              <div class="flip-face absolute inset-0 rounded-2xl p-4 bg-white/80 border border-emerald-200 flex flex-col">
+                <span class="text-xs text-emerald-900/70">Istilah</span>
+                <span class="mt-auto text-lg font-semibold text-emerald-900">Gendhing</span>
+              </div>
+              <div class="flip-face flip-back absolute inset-0 rounded-2xl p-4 bg-emerald-600/10 border border-emerald-200 flex items-center">
+                <p class="text-emerald-900/90">Irama/komposisi musik gamelan yang mengatur tempo gerak.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flip bg-transparent">
+            <div class="flip-inner relative w-full h-40 rounded-2xl">
+              <div class="flip-face absolute inset-0 rounded-2xl p-4 bg-white/80 border border-emerald-200 flex flex-col">
+                <span class="text-xs text-emerald-900/70">Istilah</span>
+                <span class="mt-auto text-lg font-semibold text-emerald-900">Luwes</span>
+              </div>
+              <div class="flip-face flip-back absolute inset-0 rounded-2xl p-4 bg-emerald-600/10 border border-emerald-200 flex items-center">
+                <p class="text-emerald-900/90">Gerakan halus dan mengalir tanpa kaku.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flip bg-transparent">
+            <div class="flip-inner relative w-full h-40 rounded-2xl">
+              <div class="flip-face absolute inset-0 rounded-2xl p-4 bg-white/80 border border-emerald-200 flex flex-col">
+                <span class="text-xs text-emerald-900/70">Istilah</span>
+                <span class="mt-auto text-lg font-semibold text-emerald-900">Selendang</span>
+              </div>
+              <div class="flip-face flip-back absolute inset-0 rounded-2xl p-4 bg-emerald-600/10 border border-emerald-200 flex items-center">
+                <p class="text-emerald-900/90">Properti utama pada pinggang penari untuk memperindah gerak.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8">
+      <div class="text-center text-sm text-emerald-900/70">
+        Dibuat oleh Januar ismar • Belajar interaktif, ringan, dan menyenangkan.
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // State & Storage
+    const tabs = ['beranda','materi','gerak','cocokkan','kuis','flashcard'];
+    const views = {};
+    const tabButtons = {};
+    let progress = JSON.parse(localStorage.getItem('ccProgress') || '{}') || {};
+    const flags = { materiDone:false, gerakDone:false, matchDone:false, quizDone:false, notes:'' , ...progress };
+    const saveProgress = () => localStorage.setItem('ccProgress', JSON.stringify(flags));
+
+    // Init DOM refs
+    tabs.forEach(t=>{
+      views[t] = document.getElementById('view-'+t);
+      tabButtons[t] = document.querySelector('button.tab-btn[data-tab="'+t+'"]');
+    });
+    document.querySelectorAll('.quick-tab').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        const t = btn.getAttribute('data-tab'); switchTab(t);
+      });
+    });
+
+    // Tab switching
+    function switchTab(t){
+      tabs.forEach(name=>{
+        views[name].classList.toggle('hidden', name!==t);
+        tabButtons[name].classList.toggle('tab-active', name===t);
+      });
+      window.location.hash = '#'+t; // hash-based within page
+    }
+    // Deep-link via hash
+    const hashTab = location.hash.replace('#','');
+    switchTab(tabs.includes(hashTab)?hashTab:'beranda');
+    tabs.forEach(t=>{
+      tabButtons[t].addEventListener('click', ()=> switchTab(t));
+    });
+
+    // Progress UI
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const badgeMateri = document.getElementById('badgeMateri');
+    const badgeGerak = document.getElementById('badgeGerak');
+    const badgeCocok = document.getElementById('badgeCocok');
+    const badgeKuis  = document.getElementById('badgeKuis');
+    function updateBadges(){
+      const doneCount = ['materiDone','gerakDone','matchDone','quizDone'].filter(k=>flags[k]).length;
+      const pct = Math.round(doneCount/4*100);
+      progressBar.style.width = pct+'%';
+      progressText.textContent = pct+'% selesai';
+
+      const mark = (el,ok)=> {
+        el.querySelector('span').style.background = ok ? 'linear-gradient(135deg,#10b981,#f59e0b)' : '#86efac';
+        el.style.backgroundColor = ok? 'white' : 'white';
+        el.style.borderColor = ok? '#10b98155' : '#a7f3d0';
+        el.style.color = ok? '#064e3b' : '#065f46';
+      };
+      mark(badgeMateri, flags.materiDone);
+      mark(badgeGerak,  flags.gerakDone);
+      mark(badgeCocok,  flags.matchDone);
+      mark(badgeKuis,   flags.quizDone);
+    }
+    updateBadges();
+
+    document.getElementById('resetProgress').addEventListener('click', ()=>{
+      flags.materiDone=false; flags.gerakDone=false; flags.matchDone=false; flags.quizDone=false;
+      saveProgress(); updateBadges();
+    });
+
+    // Notes
+    const notes = document.getElementById('notes');
+    const saveNotesBtn = document.getElementById('saveNotes');
+    const notesSaved = document.getElementById('notesSaved');
+    notes.value = flags.notes || '';
+    saveNotesBtn.addEventListener('click', ()=>{
+      flags.notes = notes.value || '';
+      saveProgress();
+      notesSaved.textContent = 'Tersimpan ✓';
+      setTimeout(()=> notesSaved.textContent='Tersimpan', 1200);
+    });
+
+    // Materi done
+    document.getElementById('markMateriDone').addEventListener('click', ()=>{
+      flags.materiDone = true; saveProgress(); updateBadges();
+    });
+
+    // Latihan Gerak logic
+    const steps = [
+      {name:'Sembahan', counts:['1','2','3','4'], pose:(t)=> {
+        poseSembahan(t);
+      }},
+      {name:'Nglayang', counts:['1','2','3','4'], pose:(t)=> {
+        poseNglayang(t);
+      }},
+      {name:'Ulap-ulap', counts:['1','2','3','4'], pose:(t)=> {
+        poseUlapUlap(t);
+      }},
+      {name:'Seblak Sampur', counts:['1','2','3','4'], pose:(t)=> {
+        poseSeblakSampur(t);
+      }},
+    ];
+    let idx=0; let tempo=1; let demoTimer=null; let beatIndex=0;
+    const elStepName = document.getElementById('stepName');
+    const elStepCount = document.getElementById('stepCount');
+    const elTempoLabel = document.getElementById('tempoLabel');
+    const elCountDisplay = document.getElementById('countDisplay');
+    const beatDots = Array.from(document.querySelectorAll('.beatDot'));
+    function renderStep(){
+      const s = steps[idx];
+      elStepName.textContent = s.name;
+      elStepCount.textContent = s.counts.join(' • ');
+    }
+    renderStep();
+
+    // SVG parts
+    const head = document.getElementById('head');
+    const bodyR = document.getElementById('body');
+    const armL = document.getElementById('armL');
+    const armR = document.getElementById('armR');
+    const legL = document.getElementById('legL');
+    const legR = document.getElementById('legR');
+    const scarf = document.getElementById('scarf');
+
+    function setAttr(el, attr, val){ el.setAttribute(attr, val); }
+    function translateBody(x,y){
+      setAttr(bodyR,'transform',`translate(${x},${y})`);
+      setAttr(head,'transform',`translate(${x/1.2},${y/1.2})`);
+      setAttr(armL,'transform',`translate(${x/1.1},${y/1.1})`);
+      setAttr(armR,'transform',`translate(${x/1.1},${y/1.1})`);
+      setAttr(legL,'transform',`translate(${x/1.3},${y/1.3})`);
+      setAttr(legR,'transform',`translate(${x/1.3},${y/1.3})`);
+      setAttr(scarf,'transform',`translate(${x/1.1},${y/1.1})`);
+    }
+    function transformArm(t){
+      const rot = t*10;
+      setAttr(armL,'transform',`rotate(${rot} 142 118)`);
+      setAttr(armR,'transform',`rotate(${-rot} 178 118)`);
+      setAttr(scarf,'transform',`skewX(${rot/6})`);
+    }
+    function jinjit(level){
+      setAttr(legL,'transform',`translate(0,${-6*level})`);
+      setAttr(legR,'transform',`translate(0,${-3*level})`);
+    }
+    function pulse(t){
+      const scale = 1 + 0.03*Math.abs(t);
+      setAttr(bodyR,'transform',`translate(0,0) scale(${scale})`);
+      setAttr(scarf,'transform',`skewX(${t*8})`);
+    }
+
+    // Kumpulan pose khas Gambyong
+    function poseSembahan(t){
+      // tangan di depan dada lalu menurun halus seperti salam/unggah-ungguh
+      const rot = -10 + Math.sin(t*2)*4;
+      setAttr(armL,'transform',`rotate(${rot} 142 118)`);
+      setAttr(armR,'transform',`rotate(${10-rot} 178 118)`);
+      translateBody(0, 2*Math.sin(t*2));
+      jinjit(0.1+0.1*Math.abs(Math.sin(t*2)));
+    }
+    function poseNglayang(t){
+      // mengalun lebar: satu tangan membuka, satu menutup perlahan
+      const rot = 14*Math.sin(t*1.5);
+      setAttr(armL,'transform',`rotate(${-10-rot} 142 118)`);
+      setAttr(armR,'transform',`rotate(${10+rot} 178 118)`);
+      translateBody(4*Math.sin(t*1.2), 0);
+      jinjit(0.15+0.1*Math.abs(Math.sin(t*1.2)));
+    }
+    function poseUlapUlap(t){
+      // permainan pergelangan: gerak kecil halus dan kepala miring
+      const rot = 6*Math.sin(t*2.2);
+      setAttr(head,'transform',`rotate(${rot} 160 80)`);
+      setAttr(armL,'transform',`rotate(${rot} 142 118)`);
+      setAttr(armR,'transform',`rotate(${-rot} 178 118)`);
+      translateBody(0, 0);
+      jinjit(0.1);
+    }
+    function poseSeblakSampur(t){
+      // sentakan selendang: scarf bergerak jelas kanan-kiri diikuti badan
+      const swing = 14*Math.sin(t*2.6);
+      setAttr(scarf,'transform',`skewX(${swing/2}) translate(${swing/2},0)`);
+      setAttr(armL,'transform',`rotate(${swing/3} 142 118)`);
+      setAttr(armR,'transform',`rotate(${swing/-3} 178 118)`);
+      translateBody(swing/6, 0);
+      jinjit(0.2+0.1*Math.abs(Math.sin(t*2.6)));
+    }
+
+    // Beat loop
+    function tickBeat(){
+      beatDots.forEach((d,i)=> d.style.opacity = i===beatIndex? '1':'0.35');
+      elCountDisplay.textContent = (beatIndex+1);
+      beatIndex = (beatIndex+1)%4;
+    }
+    setInterval(tickBeat, 700);
+
+    // Demo play
+    function startDemo(){
+      stopDemo();
+      let t=0; const s = steps[idx];
+      demoTimer = setInterval(()=>{
+        // t oscillates -1..1 depending on tempo
+        const speed = 0.04 * (tempo);
+        t += speed;
+        const wave = Math.sin(t);
+        s.pose(wave);
+      }, 30);
+    }
+    function stopDemo(){ if(demoTimer){ clearInterval(demoTimer); demoTimer=null; } }
+    document.getElementById('playDemo').addEventListener('click', ()=>{
+      if(demoTimer){ stopDemo(); event.currentTarget.textContent='Putar Demo'; }
+      else { startDemo(); event.currentTarget.textContent='Hentikan Demo'; }
+    });
+    document.getElementById('prevStep').addEventListener('click', ()=>{
+      idx = (idx-1+steps.length)%steps.length; renderStep(); stopDemo(); document.getElementById('playDemo').textContent='Putar Demo';
+    });
+    document.getElementById('nextStep').addEventListener('click', ()=>{
+      idx = (idx+1)%steps.length; renderStep(); stopDemo(); document.getElementById('playDemo').textContent='Putar Demo';
+    });
+    document.getElementById('tempo').addEventListener('input', (e)=>{
+      tempo = Number(e.target.value);
+      elTempoLabel.textContent = 'Tempo: '+tempo+'x';
+    });
+
+    document.getElementById('markGerakDone').addEventListener('click', ()=>{
+      flags.gerakDone = true; saveProgress(); updateBadges();
+    });
+
+    // Cocokkan (click-to-match)
+    const pairs = [
+      {id:'maju', left:'Maju Gending', right:'Pembukaan tarian'},
+      {id:'utama', left:'Tari Utama', right:'Bagian inti dengan variasi gerak'},
+      {id:'mundur', left:'Mundur Gending', right:'Penutup tarian'},
+    ];
+    let leftSel=null, rightSel=null;
+    const leftList = document.getElementById('leftList');
+    const rightList = document.getElementById('rightList');
+
+    function renderMatch(){
+      leftList.innerHTML=''; rightList.innerHTML='';
+      pairs.forEach(p=>{
+        const L = document.createElement('button');
+        L.type='button';
+        L.className='btn px-4 py-3 rounded-xl text-left bg-white border border-emerald-200 hover:bg-emerald-50 flex items-center justify-between';
+        L.dataset.id = p.id; L.textContent = p.left;
+        const dot = document.createElement('span'); dot.className='ml-3 h-2.5 w-2.5 rounded-full bg-emerald-300'; L.appendChild(dot);
+        L.addEventListener('click', ()=>{
+          if(L.disabled) return;
+          document.querySelectorAll('#leftList .selected').forEach(el=>el.classList.remove('selected','ring','ring-emerald-300'));
+          L.classList.add('selected','ring','ring-emerald-300');
+          leftSel = p.id; tryCheck();
+        });
+        leftList.appendChild(L);
+
+        const R = document.createElement('button');
+        R.type='button';
+        R.className='btn px-4 py-3 rounded-xl text-left bg-white border border-emerald-200 hover:bg-emerald-50';
+        R.dataset.id = p.id; R.textContent = p.right;
+        R.addEventListener('click', ()=>{
+          if(R.disabled) return;
+          document.querySelectorAll('#rightList .selected').forEach(el=>el.classList.remove('selected','ring','ring-emerald-300'));
+          R.classList.add('selected','ring','ring-emerald-300');
+          rightSel = p.id; tryCheck();
+        });
+        rightList.appendChild(R);
+      });
+    }
+    renderMatch();
+
+    const matchStatus = document.getElementById('matchStatus');
+    function tryCheck(){
+      if(!leftSel || !rightSel) return;
+      if(leftSel===rightSel){
+        const L = leftList.querySelector('[data-id="'+leftSel+'"]');
+        const R = rightList.querySelector('[data-id="'+rightSel+'"]');
+        L.classList.remove('ring','ring-emerald-300');
+        R.classList.remove('ring','ring-emerald-300');
+        L.classList.add('bg-emerald-600','text-white','border-emerald-600');
+        R.classList.add('bg-emerald-600','text-white','border-emerald-600');
+        L.disabled = true; R.disabled = true;
+        leftSel=null; rightSel=null;
+        checkAllMatched();
+      } else {
+        matchStatus.textContent = 'Belum tepat, coba lagi!';
+        setTimeout(()=> matchStatus.textContent='', 1000);
+      }
+    }
+    function checkAllMatched(){
+      const remaining = rightList.querySelectorAll('button:not([disabled])').length;
+      if(remaining===0){
+        matchStatus.textContent = 'Semua cocok! Bagus sekali 🎉';
+      }
+    }
+    document.getElementById('resetMatch').addEventListener('click', ()=>{ renderMatch(); matchStatus.textContent=''; });
+    document.getElementById('markMatchDone').addEventListener('click', ()=>{
+      flags.matchDone = true; saveProgress(); updateBadges();
+    });
+
+    // Quiz
+    const quizForm = document.getElementById('quizForm');
+    const quizResult = document.getElementById('quizResult');
+    const answers = { q1:'solo', q2:'padi', q3:'m7', q4:'kuningHijau', q5:'iring', q6:'selendang', q7:'tiga', q8:'mata', q9:'kesuburan', q10:'kesuburanTanah' };
+
+    quizForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      let correct=0, total=10;
+      Object.keys(answers).forEach(q=>{
+        const chosen = quizForm.querySelector('input[name="'+q+'"]:checked');
+        const val = chosen? chosen.value : '';
+        if(val===answers[q]) correct++;
+      });
+      quizResult.textContent = 'Skor: '+correct+'/'+total+(correct===total?' • Sempurna!':'');
+      // Tandai selesai jika skor >= 8
+      if(correct>=8){ flags.quizDone=true; saveProgress(); updateBadges(); }
+    });
+    document.getElementById('resetQuiz').addEventListener('click', ()=>{
+      quizForm.reset(); quizResult.textContent='';
+    });
+
+    // Flashcards flip
+    document.querySelectorAll('.flip').forEach(card=>{
+      card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+    });
+
+    // Restore badges state on load
+    updateBadges();
+
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9827c5390206f914',t:'MTc1ODQzODkxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
